@@ -1,0 +1,145 @@
+*
+{
+    margin: 0;
+    padding: 0;
+
+    font-family: Arial, sans-serif;
+    /* border: 1px dashed; */
+    box-sizing: border-box;
+}
+*:hover
+{
+    /* border: 2px dashed red; */
+}
+
+:root {
+    --notes-section-color: #1f2229;
+    --hover-color: #3c4149;
+    --stored-note-color: #fff34a;
+}
+
+.app {
+    background-color: #282c34;
+    min-height: 100vh;
+    display: grid;
+    color: white;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 1rem;
+}
+.app h2 {
+    display: block;
+    position: absolute;
+    width: 100%;
+    text-align: center;
+}
+
+.note-edit-area {
+    border-radius: 5px;
+    margin-top: 2.5rem;
+    padding: 1rem;
+}
+
+.note-edit-area input[type=text] {
+    min-width: 100%;
+    font-size: 1.75rem;
+    border-radius: 5px;
+    position: relative;
+}
+
+.note-edit-area textarea {
+    position: relative;
+    font-size: 1.75rem;
+    min-width: 100%;
+    min-height: 50%;
+    margin-top: 1rem;
+}
+
+.note-edit-area .note-button
+{
+    display: flex;
+}
+
+.note-edit-area .note-button button {
+    flex: 1;
+    cursor: pointer;
+
+    background: none;
+    border: none;
+    
+    font-size: 1.75rem;
+    
+    color: white;
+    margin: 0.75rem;
+    padding: 0.250rem 1rem;
+    border-radius: 5px;
+}
+
+.note-edit-area .note-button button:hover {
+    transition: 250ms ease;
+    background: var(--hover-color);
+}
+
+.notes-storage-area {
+    background-color: var(--notes-section-color);
+    border-radius: 5px;
+    margin-top: 2.5rem;
+    padding: 1rem;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
+}
+
+.stored-note {
+    display: flex;
+    flex-direction: column;
+    border: none;
+    background: var(--stored-note-color);
+    overflow: auto;
+    color: black;
+    margin: 0.125rem;
+    min-width: 16ch;
+    max-height: 16ch;
+}
+.stored-note h3,
+.stored-note p {
+    flex: 1;
+    margin: auto;
+    position: relative;
+}
+.stored-note button {
+    background: none;
+    border: none;
+    color: red;
+    font: 16px;
+}
+.stored-note:hover:not(.stored-note-full) {
+    transition: 250ms ease;
+    transform: scale(110%);
+}
+.stored-note:hover:not(.stored-note-full) button {
+    transition: 250ms ease;
+    opacity: 100%;
+}
+
+/* Will be added to stored note when clicked on */
+.stored-note-full {
+    transition: 250ms ease;
+    transform: scale(200%);
+    z-index: 2;
+}
+
+.stored-note p {
+    font-style: italic;
+}
+
+@media (max-width: 600px) {
+    .app {
+        grid-template-columns: 1fr;
+    }
+
+    .notes-storage-area {
+        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+    }
+}

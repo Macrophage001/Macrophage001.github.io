@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="index.css">
+    <title>Grocery Store</title>
+</head>
+<body>
+    <!-- HEADER -->
+    <div class="header">
+        <h1>Grocery Store</h1>
+        <hr>
+        <nav>
+            <div class="nav-links">
+                <ul>
+                    <li id="cart">Cart: 0</li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+
+    <!-- BODY -->
+    <div class="introduction">
+        <h3>Hello and Welcome to the Grocery Store</h3>
+        <p>Please make a selection from any one of our fine categories below.</p>
+    </div>
+    <div class="grocery-items">
+        <h3>Produce</h3>
+        <br>
+        <div class="item">
+            <p>Carrots</p>
+            <button onclick="addItemToShoppingCart('Produce', 0)">Add</button>
+            <button onclick="removeItemFromShoppingCart('Produce', 0)">Remove</button>
+        </div>
+        <div class="item">
+            <p>Avocados</p>
+            <button onclick="addItemToShoppingCart('Produce', 1)">Add</button>
+            <button onclick="removeItemFromShoppingCart('Produce', 1)">Remove</button>
+        </div>
+        <div class="item">
+            <p>Broccoli</p>
+            <button onclick="addItemToShoppingCart('Produce', 2)">Add</button>
+            <button onclick="removeItemFromShoppingCart('Produce', 2)">Remove</button>
+        </div>
+        <div class="item">
+            <p>Potatoes</p>
+            <button onclick="addItemToShoppingCart('Produce', 3)">Add</button>
+            <button onclick="removeItemFromShoppingCart('Produce', 3)">Remove</button>
+        </div>
+        <div class="item">
+            <p>Leeks</p>
+            <button onclick="addItemToShoppingCart('Produce', 4)">Add</button>
+            <button onclick="removeItemFromShoppingCart('Produce', 4)">Remove</button>
+        </div>
+    </div>
+    <div class="grocery-items">
+        <h3>Furniture</h3>
+        <br>
+        <div class="item">
+            <p>Chair</p>
+            <button onclick="addItemToShoppingCart('Furniture', 0)">Add</button>
+            <button onclick="removeItemFromShoppingCart('Furniture', 0)">Remove</button>
+        </div>
+        <div class="item">
+            <p>Table</p>
+            <button onclick="addItemToShoppingCart('Furniture', 1)">Add</button>
+            <button onclick="removeItemFromShoppingCart('Furniture', 1)">Remove</button>
+        </div>
+        <div class="item">
+            <p>Vase</p>
+            <button onclick="addItemToShoppingCart('Furniture', 2)">Add</button>
+            <button onclick="removeItemFromShoppingCart('Furniture', 2)">Remove</button>
+        </div>
+    </div>
+    <div class="checkout" id="checkout-id">
+        <div class="checkout-item">
+            <h3>Total</h3>
+            <h4>$0.00</h4>
+        </div>
+    </div>
+    <script src="index.js"></script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Complaints App</title>
+</head>
+<body>
+    <div class="app">
+        <h2>WHERE CAN WE CAUSE TROUBLE TODAY? </h2>
+        <div class="complaints-search-bar">
+            <input id="num-complaints-input" type="text" placeholder="# OF COMPLAINTS">
+            <button onclick="lookupComplaint('BROOKLYN')">Brooklyn</button>
+            <button onclick="lookupComplaint('BRONX')">Bronx</button>
+            <button onclick="lookupComplaint('MANHATTAN')">Manhattan</button>
+            <button onclick="lookupComplaint('QUEENS')">Queens</button>
+            <button onclick="lookupComplaint('STATEN ISLAND')">Staten Island</button>
+        </div>
+        
+        <div class="complaints-search-output">
+            <div class="complaint">
+                <div class="complaint-title">
+                    <h3>Complaint</h3>
+                    <button onclick="">What did the police do?</button>
+                </div>
+                <div class="complaint-response">
+                    <h4>Lorem ipsum dolor sit amet consectetur adipisicing elit.</h4>
+                </div>
+            </div>
+            <div class="complaint">
+                <div class="complaint-title">
+                    <h3>Complai</h3>
+                    <button onclick="">What did the police do?</button>
+                </div>
+                <div class="complaint-response">
+                    <h4>Lorem ipsum dolor sit amet consectetur adipisicing elit.</h4>
+                </div>
+            </div>
+            <div class="complaint">
+                <div class="complaint-title">
+                    <h3>Complaint</h3>
+                    <button onclick="">What did the police do?</button>
+                </div>
+                <div class="complaint-response">
+                    <h4>Lorem ipsum dolor sit amet consectetur adipisicing elit.</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

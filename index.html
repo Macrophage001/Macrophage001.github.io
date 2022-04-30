@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700&display=swap" rel="stylesheet"> 
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/navigationBar.css">
+    <title>Darnell Champen - Homepage</title>
+</head>
+<body>
+    <div class="header">
+        <h2>Darnell Champen - Portfolio</h2>
+    </div>
+    <div class="hamburger-icon" onclick="toggleMenu()">
+        <div class="line"></div>
+        <div class="line"></div>
+        <div class="line"></div>
+    </div>
+    <div id="navigation-bar-id" class="navigation-bar">
+        <button class="close-btn" onclick="toggleMenu()">&times;</button>
+        <a href="#">About</a>
+        <a href="#">Services</a>
+        <a href="#">Clients</a>
+        <a href="#">Contacts</a>
+    </div>
+    <h3 class="section-header">Projects</h3>
+    <section class="projects">
+        <h3>Games</h3>
+        <div class="projects-grid">
+            <a href="./projects/games/SpaceBattle/index.html" class="project" style="--thumbnail: url(../projects/games/SpaceBattle/thumbnail.png);">
+                <h3>Space Battle</h3>
+                <p>A simple turn-based space battle. Defeat the aliens!</p>
+            </a>
+        </div>
+        <h3>Other</h3>
+        <div class="projects-grid">
+            <a href="./projects/other/complaints_app/index.html" class="project" style="--thumbnail: url(../projects/other/complaints_app/thumbnail.png);">
+                <h3>Complaints App</h3>
+                <p>Lookup engine for all complaints in NYC!</p>
+            </a>
+            <a href="./projects/other/NoteTaking/index.html" class="project" style="--thumbnail: url(../images/documents.png);">
+                <h3>Note Taking App</h3>
+                <p>A quick note taking app.</p>
+            </a>
+            <a href="./projects/other/NotSimpleFetch/index.html" class="project" style="--thumbnail: url(../images/documents.png);">
+                <h3>Fetch Request App (Advanced)</h3>
+                <p>Some fetch request testing.</p>
+            </a>
+            <a href="./projects/other/NotSimpleFetch/index.html" class="project" style="--thumbnail: url(../images/documents.png);">
+                <h3>Fetch Request App (Simple)</h3>
+                <p>Some fetch request testing.</p>
+            </a>
+            <a href="./projects/other/ShoppingCart/index.html" class="project" style="--thumbnail: url(../images/documents.png);">
+                <h3>Shopping Cart App</h3>
+                <p>A shopping cart simulation.</p>
+            </a>
+            <a href="./projects/other/SimpleBlog/index.html" class="project" style="--thumbnail: url(../images/documents.png);">
+                <h3>Simple Blog</h3>
+                <p>A blog design I was working on.</p>
+            </a>
+        </div>
+        <h3>Experiments</h3>
+        <div class="projects-grid">
+
+        </div>
+    </section>
+
+    <script src="./scripts/navigationBar.js"></script>
+</body>
+</html>

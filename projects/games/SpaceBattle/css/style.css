@@ -1,0 +1,401 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+
+    font-family: 'Roboto', sans-serif;
+}
+
+body {
+    background-color: #03030a;
+}
+
+:root {
+    --max-width-01: 75vw;
+    --max-width-02: 75vw;
+}
+
+
+.title {
+    padding: 1rem;
+    text-align: center;
+}
+.uniform-width {
+    max-width: var(--max-width-01);
+}
+.uniform-center {
+    margin-left: auto;
+    margin-right: auto;
+}
+.display-none {
+    display: none;
+}
+
+.game {
+    display: flex;
+    height: 52vh;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 1rem;
+    justify-content: space-between;
+
+    background-image: url(https://media.giphy.com/media/U3qYN8S0j3bpK/giphy.gif);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+
+    box-shadow: inset 0px 0px 21px #0000009d;
+
+    overflow: hidden;
+}
+.ship-area-player {
+    align-self: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    height: 90%;
+    width: 12vw;
+    margin: 0 1rem;
+    /* border: 2px solid green; */
+}
+.ship-area-aliens {
+    align-self: center;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+
+    height: 90%;
+    width: 12vw;
+    margin: 0 3rem;
+    /* border: 2px solid red; */
+}
+.player-ship {
+    background-image: url(../assets/images/spaceship.gif);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    position: relative;
+    width: 3rem;
+    height: 3rem;
+}
+.player-ship-attack-animation {
+    animation: player-attack 1000ms;
+}
+.player-ship-retreat-animation {
+    animation: player-retreat 2500ms forwards;
+}
+.player-ship-leave-animation {
+    animation: player-leave 2500ms forwards;
+}
+.player-ship-destroyed-animation {
+    animation: player-ship-destroyed 2000ms forwards;
+}
+.alien-ship {
+    background-image: url(../assets/images/mojojojo.gif);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    position: relative;
+    max-width: 4rem;
+    max-height: 4rem;
+
+}
+.alien-stats {
+    position: relative;
+    min-width: 2rem;
+    min-height: 3rem;
+    border-radius: 5%;
+
+    /* background-color: #278b45; */
+    box-shadow: 0 0 8px green;
+    border: 1px solid green;
+
+    right: -100%;
+    /* background-color: white; */
+}
+.destroyed {
+    background-image: url(../assets/images/explosion.gif);
+}
+.alien-stats p {
+    padding: 0.2rem;
+    color: rgb(204, 255, 159);
+    font-size: 12px;
+    font-weight: bold;
+}
+.alien-ship-attack-animation {
+    animation: alien-attack 1000ms;
+}
+.explosion {
+    display: none;
+    position: absolute;
+    min-width: 64px;
+    min-height: 64px;
+    top: 0;
+
+    background-image: url(../assets/images/explosion.gif);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+.impact {
+    position: absolute;
+    min-width: 16px;
+    min-height: 16px;
+
+    background-image: url(../assets/images/explosion.gif);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+@keyframes alien-attack {
+    0% {
+        right: 0;
+    }
+    50% {
+        right: 30vw;
+    }
+    100% {
+        right: 0;
+    }
+}
+@keyframes player-attack {
+    0% {
+        left: 0;
+    }
+    50% {
+        left: 30vw;
+    }
+    100% {
+        left: 0;
+    }
+}
+@keyframes player-retreat {
+    0% {
+        transform: rotateZ(0deg);
+        left: 0vw;
+    }
+    25% {
+        left: 8vw;
+        transform: rotateZ(180deg);
+    }
+    100% {
+        transform: rotateZ(180deg);
+        left: -25vw;
+    }
+}
+@keyframes player-leave {
+    0% {
+        left: 0vw;
+    }
+    25% {
+        left: -2vw;
+    }
+    100% {
+        left: 100vw;
+    }
+}
+@keyframes player-ship-destroyed {
+    0% {
+        right: 0;
+        transform: 
+            rotateZ(0deg)
+            scale(1);
+    }
+    100% {
+        right: 5vw;
+        transform: 
+            rotateZ(720deg)
+            scale(0);
+    }
+}
+
+h2 {
+    color: white;
+    margin: 1rem;
+}
+
+.console {
+    display: flex;
+    max-height: 8rem;
+    padding: 1rem;
+    justify-content: space-between;
+    margin-top: 1rem;
+
+    box-shadow: 0px 4px 6px #3e40979d;
+}
+.console > * {
+    min-width: 50%;
+}
+.player-stats {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+
+    border-radius: 5%;
+}
+.player-stats > p {
+    color: white;
+    margin: 0.125rem;
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+.current-actions {
+    display: flex;
+    max-height: 4rem;
+    flex-direction: column;
+    overflow: auto;
+}
+.current-actions p {
+    color: white;
+    font-size: 0.9rem;
+}
+.controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.action-btn {
+    flex: 1;
+
+    cursor: pointer;
+    background: none;
+    border: 1px solid transparent;
+
+    margin: 0.75rem 0;
+    padding: 1rem;
+
+    color: white;
+    box-shadow: 0px 4px 8px #3e40979d;
+}
+.action-btn:hover {
+    transition: 300ms;
+    box-shadow: 0px 4px 12px #3b3eff;
+}
+.action-btn:disabled {
+    cursor: default;
+    border-radius: 8%;
+    border: 1px solid none solid solid #ff0000;
+    box-shadow: 0px 4px 8px #ff0000;
+}
+.legend {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+    border-radius: 5px;
+}
+.legend .score {
+    flex: 1;
+
+    text-align: center;
+    min-height: 2rem;
+    padding: 1rem;
+    
+    color: white;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 650px) {
+    .game {
+        height: 48vh;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 1rem;
+    }
+    .legend {
+        justify-content: center;
+    }
+    .player-ship {
+        max-width: 2.5rem;
+        max-height: 2.5rem;
+    }
+    .alien-ship {
+        max-width: 2.5rem;
+        max-height: 2.5rem;
+    }
+    .alien-stats {
+        position: relative;
+        min-width: 1rem;
+        min-height: 1rem;
+        border-radius: 5%;
+
+        box-shadow: 0 0 8px green;
+        border: 1px solid green;
+
+        right: -100%;
+    }
+    .alien-stats p {
+        color: rgb(204, 255, 159);
+        font-size: 6px;
+        font-weight: bold;
+        margin: 0;
+        padding: 0.1rem;
+    }
+    .console {
+        display: flex;
+        position: relative;
+        max-width: 75vw;
+        padding: 1rem;
+        justify-content: space-between;
+        margin-top: 1rem;
+    }
+    .player-stats {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+    }
+    .player-stats p {
+        font-size: 0.4rem;
+    }
+    .current-actions {
+        display: flex;
+        flex-direction: column;
+        overflow: auto;
+        max-height: 2.5rem;
+    }
+    .current-actions p {
+        color: white;
+        font-size: 0.4rem;
+    }
+    .legend {
+        display: flex;
+        margin-top: 1rem;
+        border-radius: 5px;
+    }
+    .legend .score {
+        text-align: center;
+        
+        color: white;
+        font-weight: bold;
+        font-size: 0.6rem;
+    }
+    .ship-area-aliens {
+        align-self: center;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+    
+        height: 90%;
+        width: 12vw;
+        margin: 0 3rem;
+    }
+    .action-btn {
+        font-size: 0.6rem;
+    }
+
+    @keyframes player-leave {
+        0% {
+            left: 0vw;
+        }
+        25% {
+            left: -2vw;
+        }
+        100% {
+            left: 85vw;
+        }
+    }
+}

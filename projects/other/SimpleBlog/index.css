@@ -1,0 +1,149 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+
+    /*  DEBUG SETTINGS */
+    /* border: 1px dashed; */
+}
+
+/* *:hover {
+    border: 2px dashed red;
+} */
+
+:root {
+    --periwinkle-ebony: #63474D;
+    --peach-crayola: #F1BF98;
+    --linen: #F5E9E2;
+}
+
+body {
+    background-color: var(--peach-crayola);
+}
+a {
+    text-decoration: none;
+    color: var(--linen);;
+}
+
+/* HEADER LAYOUT */
+.header {
+    display: block;
+    background-color: var(--periwinkle-ebony);
+    width: 65%;
+    margin: auto;
+    border-radius: 5px;
+    color: var(--linen);
+}
+.header h1 {
+    text-align: center;
+}
+.header nav {
+    padding: 0.25rem;
+}
+
+/* NAVIGATION BAR LAYOUT */
+.nav-links {
+    flex: 1;
+    text-align: left;
+    margin-top: 8px;
+}
+.nav-links ul li {
+    list-style: none;
+    display: inline-block;
+    padding: 0.125rem;
+    margin: 0 0.125rem;
+}
+.nav-links ul li:hover a {
+    transition: 250ms ease;
+    color: white;
+}
+
+.article-section {
+    display: block;
+    width: 65%;
+    max-height: 100vh;
+    overflow: auto;
+    scroll-behavior: smooth;
+
+    margin-top: 0.25rem;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0.5rem;
+    background-color: white;
+    border-radius: 5px;
+}
+
+/* ARTICLE PREVIEW LAYOUT */
+.article-preview {
+    display: block;
+
+    margin-top: 0.5rem;
+    margin-left: auto;
+    margin-right: auto;
+    width: 90%;
+    min-height: 6rem;
+
+    border-radius: 5px;
+    box-shadow: 0 0 4px;
+}
+.article-preview * {
+    color: #63474D;
+}
+.article-preview .article-content * {
+    margin-bottom: 0.125rem;
+}
+
+.article-preview h3 {
+    text-align: center;
+}
+.article-preview:hover {
+    transition: 250ms ease;
+    transform: scale(101%);
+}
+
+@media (max-width: 600px) {
+
+    * {
+        font-size: 0.95em;
+    }
+
+    .header {
+        width: 85%;
+    }
+    .article-section {
+        width: 85%;
+    }
+}
+
+
+/* FULL ARTICLE LAYOUT */
+.article-full {
+    display: block;
+
+    margin-top: 0.5rem;
+    margin-left: auto;
+    margin-right: auto;
+    width: 90%;
+    min-height: 6rem;
+
+    border-radius: 5px;
+    box-shadow: 0 0 4px;
+}
+.article-full * {
+    color: #63474D;
+}
+.article-full .article-content * {
+    margin-bottom: 0.125rem;
+}
+
+.article-full h3 {
+    text-align: center;
+}
+.article-content-full {
+    padding: 0.5rem;
+    text-indent: 2rem;
+}
+.article-content-full p {
+    margin-bottom: 0.125rem;
+}
