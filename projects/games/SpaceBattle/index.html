@@ -12,6 +12,7 @@
 </head>
 <body>
     <h2 class="title">Space Battle</h2>
+    <h3 id="current-wave">Wave: <span>0</span></h3>
     <div class="game uniform-width uniform-center">
         <div class="ship-area-player">
             <div class="player-ship" onanimationend="onAnimationCompleted(this)"></div>
@@ -34,6 +35,7 @@
     <div class="controls uniform-width uniform-center">
         <button id="attack-btn" class="action-btn" onclick="onPlayerAttack()">Attack</button>
         <button id="retreat-btn" class="action-btn" onclick="onRetreat()">Retreat</button>
+        <button id="restart-btn" class="action-btn" onclick="onRestart()">Restart</button>
     </div>
     <div class="legend uniform-width uniform-center">
         <p id="player-score" class="score">USS Assembly: <span>0</span></p>

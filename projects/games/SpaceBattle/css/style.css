@@ -15,6 +15,9 @@ body {
     --max-width-02: 75vw;
 }
 
+#current-wave span {
+    color: yellow;
+}
 
 .title {
     padding: 1rem;
@@ -39,7 +42,7 @@ body {
     margin-top: 1rem;
     justify-content: space-between;
 
-    background-image: url(https://media.giphy.com/media/U3qYN8S0j3bpK/giphy.gif);
+    background-image: url(../assets/images/starsBackgroundOptimized.gif);
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
@@ -47,6 +50,11 @@ body {
     box-shadow: inset 0px 0px 21px #0000009d;
 
     overflow: hidden;
+}
+h3 {
+    color: white;
+    justify-self: center;
+    text-align: center;
 }
 .ship-area-player {
     align-self: center;
@@ -87,11 +95,14 @@ body {
 .player-ship-retreat-animation {
     animation: player-retreat 2500ms forwards;
 }
+.player-ship-enter-animation {
+    animation: player-enter 1500ms forwards;
+}
 .player-ship-leave-animation {
     animation: player-leave 2500ms forwards;
 }
-.player-ship-destroyed-animation {
-    animation: player-ship-destroyed 2000ms forwards;
+.ship-destroyed-animation {
+    animation: player-ship-destroyed 1500ms forwards;
 }
 .alien-ship {
     background-image: url(../assets/images/mojojojo.gif);
@@ -125,6 +136,9 @@ body {
     color: rgb(204, 255, 159);
     font-size: 12px;
     font-weight: bold;
+}
+.alien-ship-enter-animation {
+    animation: alien-enter 1500ms forwards;
 }
 .alien-ship-attack-animation {
     animation: alien-attack 1000ms;
@@ -162,6 +176,17 @@ body {
         right: 0;
     }
 }
+@keyframes alien-enter {
+    0% {
+        right: -30vw;
+    }
+    50% {
+        right: 3vw;
+    }
+    100% {
+        right: 0vw;
+    }
+}
 @keyframes player-attack {
     0% {
         left: 0;
@@ -185,6 +210,18 @@ body {
     100% {
         transform: rotateZ(180deg);
         left: -25vw;
+    }
+}
+
+@keyframes player-enter {
+    0% {
+        left: -30vw;
+    }
+    50% {
+        left: 3vw;
+    }
+    100% {
+        left: 0vw;
     }
 }
 @keyframes player-leave {
