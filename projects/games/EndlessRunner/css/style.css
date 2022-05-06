@@ -1,0 +1,329 @@
+* {
+    margin: 0;
+    padding: 0;
+
+    box-sizing: border-box;
+    font-family: '04b_30';
+}
+
+@font-face {
+    font-family: '04b_30';
+    src: url(../fonts/bubbletoon.ttf);
+}
+
+:root {
+    --run-speed: 2500ms;
+    --background-width: 1920px;
+    --ground-position: 56vh;
+    --jump-height: 48vh;
+}
+
+body {
+    background-color: #f1f1f1;
+    display: flex;
+}
+
+.vacuum {
+    width: 13vw;
+    height: 65vh;
+    margin-top: 1rem;
+    background-color: #f1f1f1;
+    z-index: 1;
+}
+.game {
+    width: 75vw;
+    height: 65vh;
+
+    margin: auto;
+    margin-top: 1rem;
+
+    border-radius: 10px;
+
+    overflow: hidden;
+}
+
+.stats {
+    display: flex;
+    position: absolute;
+
+    left: 50%;
+    transform: translate(-50%);
+    
+    z-index: 1;
+}
+
+.hearts {
+    left: 13vw;
+    position: absolute;
+    width: 3%;
+
+    z-index: 1;
+}
+.hearts ul {
+    display: grid;
+    grid-template-columns: repeat(10, auto);
+}
+.hearts ul li {
+    list-style: none;
+    font-size: 2rem;
+    color: red;
+}
+
+.progress-bar {
+    position: absolute;
+    top: 5vh;
+    left: 50%;
+
+    transform: translate(-50%);
+
+    z-index: 1;
+
+    width: 24vw;
+    height: 8px;
+    background-color: #f1f1f1;
+}
+.progress-bar-thumb {
+    position: relative;
+    top: -1vh;
+    /* -1 = 0% 23vw = 100% */
+    left: -1vw;
+
+    z-index: 1;
+
+    background-image: url(../images/sonicJump.webp);
+    background-position: center;
+    background-size: cover;
+    width: 24px;
+    height: 24px;
+}
+.progress-bar-trail {
+    position: absolute;
+    top: 0;
+
+    max-width: 23.5vw;
+    width: 0%;
+    height: 6px;
+
+    background-color: red;
+}
+.score {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    position: absolute;
+    top: 2.5vh;
+    right: 13.5vw;
+    z-index: 1;
+}
+.score h2 {
+    color: white;
+}
+
+.scrolling-background {
+    width: 100%;
+    height: 65vh;
+
+    background: url(../images/sonicTilemap01.png) repeat-x;
+    background-size: contain;
+    background-position: center;
+
+    height: 100%;
+    width: 3072px;
+
+    animation: background-scroll var(--run-speed) linear infinite;
+}
+
+@keyframes background-scroll {
+    0% {
+        transform: translate(0%);
+    }
+    100% {
+        transform: translate(-50%);
+    }
+}
+
+.colliders {
+    width: 100%;
+    height: 50vh;
+}
+.player {
+    position: absolute;
+    top: calc(var(--ground-position) - 1vh);
+    left: 13vw;
+
+    background-position: center;
+    background-size: cover;
+
+    width: 32px;
+    height: 32px;
+}
+.spawn-area {
+    position: absolute;
+    top: var(--ground-position);
+    
+    left: 50%;
+    transform: translate(-50%);
+
+    border: 1px solid black;
+
+    width: 75vw;
+    height: 16px;
+}
+.coin {
+    position: absolute;
+    top: var(--ground-position);
+    left: 90vw;
+
+    background-image: url(../images/coin.gif);
+    background-position: center;
+    background-size: cover;
+
+    width: 16px;
+    height: 16px;
+}
+.heart {
+    position: absolute;
+    top: var(--ground-position);
+    left: 90vw;
+
+    color: red;
+}
+.coin-big {
+    position: absolute;
+    top: calc(var(--ground-position) - 1.5vh);
+    left: 90vw;
+
+    background-image: url(../images/coin.gif);
+    background-position: center;
+    background-size: cover;
+
+    width: 24px;
+    height: 24px;
+}
+
+.obstacle-spike-trap {
+    position: absolute;
+    top: calc(var(--ground-position) - 1.5vh);
+    left: 90vw;
+
+    background-image: url(../images/sonicSpikes.webp);
+    background-position: center;
+    background-size: cover;
+
+    width: 24px;
+    height: 24px;
+}
+
+.coin-move-animation {
+    animation: coin-move 10000ms linear forwards;
+}
+@keyframes coin-move {
+    0% {
+        left: 90vw;
+    }
+    100% {
+        left: -90vw;
+    }
+}
+.interactable-pattern {
+    position: absolute;
+    top: calc(var(--ground-position));
+    left: 90vw;
+
+    display: grid;
+    grid-template-columns: repeat(32, 26px);
+    height: 32px
+}
+.interactable-pattern > * {
+    position: static;
+}
+
+.player-won {
+    background-image: url(../images/sonicWon.gif);
+}
+.player-running {
+    background-image: url(../images/sonic-sonic-running.gif);
+}
+.player-jumping {
+    background-image: url(../images/sonicJump.webp);
+}
+
+.player-jump-animation {
+    animation: player-jump 500ms forwards;
+}
+@keyframes player-jump {
+    0% {
+        top: var(--ground-position);
+    }
+    45% {
+        top: var(--jump-height);
+    }
+    50% {
+        top: var(--jump-height);
+    }
+    100% {
+        top: var(--ground-position);
+    }
+}
+.end-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    margin: auto;
+    margin-top: 1rem;
+
+    position: absolute;
+    width: 75vw;
+    height: 65vh;
+    left: 12.5vw;
+    top: -65vh;
+ 
+    border-radius: 10px;
+
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5));
+}
+.end-card-animation {
+    animation: show-end-card 500ms linear forwards;
+}
+@keyframes show-end-card {
+    0% {
+        top: -65vh;
+    }
+    100% {
+        top: 0;
+    }
+}
+
+.end-card * {
+    margin-top: 0.2rem;
+    color: white;
+}
+.end-card button {
+    cursor: pointer;
+
+    margin-top: 0.8rem;
+    background: none;
+    border: 1px solid white;
+    padding: 1rem;
+    position: relative;
+
+    background: transparent;
+
+}
+
+.end-score {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.coin-icon {
+    background-image: url(../images/coin.gif);
+    background-position: center;
+    background-size: cover;
+
+    width: 24px;
+    height: 24px;
+}
