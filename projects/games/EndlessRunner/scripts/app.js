@@ -1,17 +1,23 @@
+import CollisionSystem from "./collisionSystem.js";
+import DistanceSystem from "./distanceSystem.js";
+import InputSystem from "./inputSystem.js";
+import AnimationEventSystem from "./animationEventSystem.js";
+
+import { MathEX, Generators } from "./utils.js";
+
 const root = document.querySelector(':root');
-const body = document.querySelector('body');
 
-const game             = document.querySelector('.game');
-const player           = document.querySelector('.player');
-const playerScoreDiv   = document.querySelector('.score h2');
-const playerHeartsDiv  = document.querySelector('.hearts ul');
-
-const colliders = document.getElementsByClassName('collider');
-const spawnArea        = document.querySelector('.spawn-area');
-const endCard          = document.querySelector('.end-card');
+const game = document.querySelector('.game');
+const player = document.querySelector('.player');
+const playerScoreDiv = document.querySelector('.score h2');
+const playerHeartsDiv = document.querySelector('.hearts ul');
 
 const progressBarThumb = document.querySelector('.progress-bar-thumb');
 const progressBarTrail = document.querySelector('.progress-bar-trail');
+
+const interactablesLayer = document.querySelector('.interactables-layer');
+const controls = document.querySelector('.controls');
+const scrollingBG = document.querySelector('.scrolling-background');
 
 const interactablePatternTemplates = [
     `
@@ -113,125 +119,120 @@ const interactablePatternTemplates = [
     `
 ]
 
-const playerHeartsTemplate = (heartsCount) => {
+// GAME STATES:
+class GameState {
+    static STARTING = Symbol('STARTING');
+    static INIT     = Symbol('INIT');
+    static WIN      = Symbol('WIN');
+    static LOSE     = Symbol('LOSE');
+    static PLAYING  = Symbol('PLAYING');
+}
+
+let currentState = GameState.STARTING;
+
+let mainIntervals = [];
+
+const playerHeartsGenerator = (heartsCount) => {
     let heartElements = '';
     for (let i = 0; i < heartsCount; i++) {
         heartElements += '<li>&hearts;</li>';
     }
-    return `${heartElements}`
+    return heartElements;
 }
-const endCardTemplate = (state, points) => `
-    <div class="end-card end-card-animation">
-        <h2>
-            ${
-                state === GameState.WIN
-                ? 'You Win!'
-                : 'You Lose!'
-            }
-        </h2>
-        <div class="end-score"><div class="coin-icon"></div><h2>${points}</h2></div>
-        <div class="controls">
-            ${
-                state === GameState.WIN
-                ? '<button onclick="startNextLevel(this)"><h2>Next Level</h2></button>'
-                : '<button onclick="restartGame(this)"><h2>Restart</h2></button>'
-            }
+const endMenuGenerator = (state) => {
+    let endCardDiv = Generators.generateHTML(`
+        <div class="end-card end-card-animation">
+            <h2>
+                ${state === GameState.WIN
+            ? 'You Win!'
+            : 'You Lose!'
+        }
+            </h2>
+            <div class="end-score"><div class="coin-icon"></div><h2>${playerScore}</h2></div>
+            <div class="end-card-controls">
+                ${state === GameState.WIN
+            ? Generators.generateHTML('<button id="next-level-btn"><h2>Next Level</h2></button>').outerHTML
+            : Generators.generateHTML('<button id="restart-btn"><h2>Restart</h2></button>').outerHTML
+        }
+            </div>
         </div>
-    </div>
-`
+    `);
+
+    let nextLevelBtn = endCardDiv.querySelector('#next-level-btn');
+    if (nextLevelBtn !== null) {
+        nextLevelBtn.addEventListener('click', startNextLevel);
+    }
+
+    let restartBtn = endCardDiv.querySelector('#restart-btn');
+    if (restartBtn !== null) {
+        restartBtn.addEventListener('click', restartGame);
+    }
+
+    return endCardDiv;
+}
+
+const menuGenerator = () => {
+    let endCardDiv = Generators.generateHTML(`
+        <div class="end-card end-card-animation">
+            <h2>Endless Runner</h2>
+            <div class="end-card-controls">
+                ${Generators.generateHTML('<button id="start-game-btn"><h2>Start</h2></button>').outerHTML}
+            </div>
+        </div>
+    `);
+
+    let startGameBtn = endCardDiv.querySelector('#start-game-btn');
+    startGameBtn.addEventListener('click', () => {
+        init();
+        currentState = GameState.PLAYING;
+        endCardDiv.remove();
+    });
+
+    return endCardDiv;
+}
 
 const FPS = 60;
 const velocityX = 1.5;
-const maxDst = 100;
+
 const dstIncrement = 0.02;
+
+const collisionSystem = new CollisionSystem();
+const animEventSystem = new AnimationEventSystem();
+const inputSystem = new InputSystem();
+const distanceSystem = new DistanceSystem(dstIncrement, root, progressBarThumb, progressBarTrail);
 
 let minObstacleSpawnChance = 0.50;
 let maxObstacleSpawnChance = 0.80;
 
 let obstacleSpawnChance = minObstacleSpawnChance;
 
-let distanceTravelled = 0;
-
-let currentLevel = 1;
-let playerScore  = 0;
+let currentLevel = 0;
+let playerScore = 0;
 let playerHearts = 3;
 
-const levelMaps = {
-    1: {maxDst: 100, minObstacleSpawnChance: 0.5, maxObstacleSpawnChance: 0.8 },
-    2: {maxDst: 150, minObstacleSpawnChance: 0.55, maxObstacleSpawnChance: 0.8 },
-    3: {maxDst: 200, minObstacleSpawnChance: 0.6, maxObstacleSpawnChance: 0.8 },
-    4: {maxDst: 250, minObstacleSpawnChance: 0.65, maxObstacleSpawnChance: 0.8 },
-    4: {maxDst: 300, minObstacleSpawnChance: 0.7, maxObstacleSpawnChance: 0.8 }
-}
-
-const lerp = (v0, v1, t) => v0 * (1 - t) + v1 * t;
-const clamp = (v, min, max) => v < min ? v = min : v > max ? v = max : v;
-const range = (min, max) => Math.random() * (max - min) + min;
-
-// GAME STATES:
-class GameState {
-    static WIN     = Symbol('WIN');
-    static LOSE    = Symbol('LOSE');
-    static PLAYING = Symbol('PLAYING');
-}
-
-let currentState = GameState.PLAYING;
-
-// I only need the element's x, y, width, and height for my purposes.
-const generateRect = (element) => {
-    let boundingRect = element.getBoundingClientRect();
-    return {
-        x: boundingRect.x,
-        y: boundingRect.y,
-        width: boundingRect.width,
-        height: boundingRect.height
-    };
-};
-const support = (function() {
-    if (!window.DOMParser) return false;
-    var parser = new DOMParser();
-    try {
-        parser.parseFromString('x', 'text/html');
-    } catch (err) {
-        console.trace(err);
-        return false;
-    }
-    return true;
-})();
-const generateHTML = (str) => {
-    if (support) {
-        var parser = new DOMParser();
-        var doc = parser.parseFromString(str, 'text/html');
-        return doc.body.firstChild;
-    }
-    var dom = document.createElement('div');
-    dom.innerHTML = str;
-    return dom;
-}
-
-var t;
-var i;
-
-let mainIntervals = [];
-const generateLoopCallback = (callback, interval, arr) => {
-    if (arr) {
-        arr.push(setInterval(() => {
-            callback();
-        }, interval));
-    } else {
-        i = setInterval(() => {
-            callback();
-        }, interval);
-    }
-}
+const levelMaps = [
+    { maxDst: 50, minObstacleSpawnChance: 0.5, maxObstacleSpawnChance: 0.8 },
+    { maxDst: 75, minObstacleSpawnChance: 0.55, maxObstacleSpawnChance: 0.8 },
+    { maxDst: 100, minObstacleSpawnChance: 0.6, maxObstacleSpawnChance: 0.8 },
+    { maxDst: 125, minObstacleSpawnChance: 0.65, maxObstacleSpawnChance: 0.8 },
+    { maxDst: 150, minObstacleSpawnChance: 0.7, maxObstacleSpawnChance: 0.8 },
+    { maxDst: 175, minObstacleSpawnChance: 0.75, maxObstacleSpawnChance: 0.8 },
+    { maxDst: 200, minObstacleSpawnChance: 0.75, maxObstacleSpawnChance: 0.8 },
+    { maxDst: 225, minObstacleSpawnChance: 0.75, maxObstacleSpawnChance: 0.8 },
+    { maxDst: 250, minObstacleSpawnChance: 0.75, maxObstacleSpawnChance: 0.8 },
+    { maxDst: 275, minObstacleSpawnChance: 0.75, maxObstacleSpawnChance: 0.8 }
+]
 
 class CollisionHandler {
     constructor(element) {
         this.element = element;
     }
+    Handle(interactables, collider) {
+        console.warn('Should not be using the base class "Handle" function');
+    }
 }
 class PlayerCollisionHandler extends CollisionHandler {
-    Handle(collider) {
+    Handle(interactables, collider) {
         interactables.forEach(i => {
             if (i.className === collider.classList[0]) {
                 i.OnCollect();
@@ -240,6 +241,7 @@ class PlayerCollisionHandler extends CollisionHandler {
         });
     }
 }
+
 class InteractableSystem {
     constructor(className) {
         this.className = className;
@@ -277,234 +279,26 @@ class HeartInteractable extends InteractableSystem {
         super('heart');
     }
     OnCollect() {
-        playerHearts = clamp(playerHearts + 1, 0, 3);
+        playerHearts = MathEX.clamp(playerHearts + 1, 0, 3);
     }
 }
 
-class CollisionSystem {
-    constructor() {
-        this.collisionHandlers = [];
-        this.colliders = document.getElementsByClassName('collider');
-    }
+let generatedInteractables = [];
+const spawnInteractable = () => {
+    let randomIndex = Math.floor(Math.random() * interactablePatternTemplates.length);
+    let interactable = Generators.generateHTML(interactablePatternTemplates[randomIndex]);
 
-    AddCollisionHandler(collisionHandler) {
-        this.collisionHandlers.push(collisionHandler);
-    }
+    generatedInteractables.push(interactable);
 
-    // Source: https://stackoverflow.com/questions/9768291/check-collision-between-certain-divs
-    Overlap(colA, colB) {
-        const rectA = colA.getBoundingClientRect();
-        const rectB = colB.getBoundingClientRect();
-
-        const inHorizontalBounds = rectA.x < rectB.x + rectB.width && rectA.x + rectA.width > rectB.x;
-        const inVerticalBounds = rectA.y < rectB.y + rectB.height && rectA.y + rectA.height > rectB.y;
-
-        return inHorizontalBounds && inVerticalBounds;
-    }
-
-    HandleCollision() {
-        this.collisionHandlers.forEach(handler => {
-            for (let i = 0; i < this.colliders.length; i++) {
-                let collider = this.colliders[i];
-                if (this.Overlap(handler.element, collider)) {
-                    handler.Handle(collider);
-                }
-            }
-        });
-    }
-}
-
-let inputIntervals = {};
-class InputSystem {
-    constructor() {
-        this.keyHandlers = {};
-    }
-
-    AddKeyHandler(key, onKeyDown, onKeyUp) {
-        if (this.keyHandlers[key] !== undefined) {
-            this.keyHandlers[key].push(onKeyDown);
-            this.keyHandlers[key].keyDown.push(onKeyDown);
-            this.keyHandlers[key].keyUp.push(onKeyUp);
-        } else {
-            this.keyHandlers[key] = { keyDown: [onKeyDown], keyUp: [onKeyUp] };
-        }
-    }
-
-    HandleKeys() {
-        document.onkeydown = (e) => {
-            e.preventDefault();
-            if (inputIntervals[e.key] === undefined) {
-                inputIntervals[e.key] = setInterval(() => {
-                    this.keyHandlers[e.key].keyDown.forEach(cb => cb());
-                });
-            }
-        }
-
-        document.onkeyup = (e) => {
-            e.preventDefault();
-            if (inputIntervals[e.key] !== undefined) {
-                for (const prop in inputIntervals) {
-                    if (prop === e.key) {
-                        clearInterval(inputIntervals[prop]);
-                        inputIntervals[e.key] = undefined;
-                        this.keyHandlers[e.key].keyUp.forEach(cb => { if (typeof cb === 'function') cb() });
-                    }
-                }
-            }
-        }
-    }
-    DisableKeys() {
-        document.onkeydown = null;
-        document.onkeyup   = null;
-    }
-}
-class AnimationEventSystem {
-    constructor() {
-        this.animationEventHandlers = [];
-    }
-
-    AddAnimationEventHandler(element, animationName, eventType, callBack) {
-        this.animationEventHandlers.push({ element, animationName, eventType, callBack });
-    }
-
-    HandleAnimationEvents() {
-        for (let i = 0; i < this.animationEventHandlers.length; i++) {
-            let evHandler = this.animationEventHandlers[i];
-            document.addEventListener(evHandler.eventType, () => {
-                if (evHandler.element.classList.contains(evHandler.animationName)) {
-                    evHandler.callBack()
-                }
-            });
-        }
-    }
-}
-let dstTravelledTimeouts = [];
-class DistanceSystem {
-    constructor(maxDst, dstIncrement, scrollingBGDiv) {
-        this.maxDst = maxDst;
-        this.defaultDstIncrement = this.dstIncrement = dstIncrement;
-        this.distanceTraveled = 0;
-        this.percentageTraveled = 0;
-        this.scrollingBGDiv = scrollingBGDiv;
-        this.dstTraveledTimeouts = [];
-        this.dstReached = false;
-    }
-    Pause() {
-        this.dstIncrement = 0;
-        this.SetSpeed(0);
-        this.dstTraveledTimeouts.forEach(t => clearTimeout(t));
-    }
-    Start() {
-        this.maxDst = levelMaps[currentLevel].maxDst;
-
-        this.dstIncrement = this.defaultDstIncrement;
-        this.SetSpeed(5500);
-        this.UpdateDistanceTraveled();
-    }
-    Restart() {
-        this.maxDst = levelMaps[currentLevel].maxDst;
-
-        this.dstIncrement = this.defaultDstIncrement;
-        this.percentageTraveled = 0;
-        this.distanceTraveled = 0;
-        this.SetSpeed(5500);
-        this.UpdateDistanceTraveled();
-    }
-
-    SetSpeed(ms) {
-        root.style.setProperty('--run-speed', `${ms}ms`);
-    }
-
-    UpdateDistanceTraveled() {
-        generateLoopCallback(() => {
-            this.distanceTraveled += this.dstIncrement;
-            this.percentageTraveled = (this.distanceTraveled / this.maxDst);
-            if (this.percentageTraveled < 1) {
-                let thumbPositionX = lerp(-1, 23, this.percentageTraveled);
-                progressBarThumb.style.left = `${thumbPositionX}vw`;
-                progressBarTrail.style.width = `${this.percentageTraveled * 100}%`;
-            }
-            else {
-                this.Pause();
-            }
-        }, 10, this.dstTraveledTimeouts);
-    }
-}
-
-let interactables = [];
-const initInteractables = () => {
-    interactables.push(new CoinInteractable());
-    interactables.push(new BigCoinInteractable());
-    interactables.push(new SpikeTrapInteractable());
-    interactables.push(new HeartInteractable());
-}
-const initCollisionHandlers = () => collisionSystem.AddCollisionHandler(new PlayerCollisionHandler(player));
-const initAnimEvents = () => {
-    animEventSystem.AddAnimationEventHandler(player, 'player-jump-animation', 'animationend', () => {
-        player.classList.remove('player-jump-animation');
-        player.classList.toggle('player-jumping');
-        player.classList.toggle('player-running');
-    });
-    animEventSystem.HandleAnimationEvents();
-}
-const initInputs = () => {
-    // ' ' = Spacebar 
-    inputSystem.AddKeyHandler(' ', () => {
-        if (!player.classList.contains('player-jump-animation')) {
-            player.classList.add('player-jump-animation');
-            player.classList.toggle('player-running');
-            player.classList.toggle('player-jumping');
-        }
-    });
-    inputSystem.AddKeyHandler('ArrowRight', () => {
-        let right     = player.getBoundingClientRect().right;
-        let left      = player.getBoundingClientRect().left;
-        let gameRight = game.getBoundingClientRect().right;
-
-        if (right < gameRight - 5)
-            player.style.left = `${left + velocityX}px`;
-    });
-    inputSystem.AddKeyHandler('ArrowLeft', () => {
-        let left = player.getBoundingClientRect().left;
-        let gameLeft = game.getBoundingClientRect().left;
-
-        if (left > gameLeft + 5) {
-            player.style.left = `${left - velocityX}px`;
-        }
-    });
-    inputSystem.AddKeyHandler('h', () => {
-        playerHearts += 1;
-    });
-
-}
-const initLoops = () => {
-    generateLoopCallback(() => {
-        update();
-    }, 1000 / FPS, mainIntervals);
-    generateLoopCallback(() => {
-        if (currentState === GameState.PLAYING) {
-            let spawnChance = Math.random();
-            if (spawnChance <= obstacleSpawnChance) {
-                let randomIndex = Math.floor(Math.random() * interactablePatternTemplates.length);
-                let interactable = generateHTML(interactablePatternTemplates[randomIndex]);
-
-                generatedInteractables.push(interactable);
-
-                game.append(interactable);
-            }
-        }
-    }, 2000, mainIntervals);
-    generateLoopCallback(() => {
-        obstacleSpawnChance = clamp(obstacleSpawnChance + 0.01, minObstacleSpawnChance, maxObstacleSpawnChance);
-    }, 2000, mainIntervals);
+    interactablesLayer.append(interactable);
 }
 
 const setPlayerScore = (score) => {
-    playerScore = clamp(score, 0, 9999);
+    playerScore = MathEX.clamp(score, 0, 9999);
     playerScoreDiv.innerHTML = playerScore;
 }
 const modPlayerScore = (score) => {
-    playerScore = clamp(playerScore + score, 0, 9999);
+    playerScore = MathEX.clamp(playerScore + score, 0, 9999);
     playerScoreDiv.innerHTML = playerScore;
 }
 
@@ -519,8 +313,10 @@ const checkPlayerLost = () => {
     }
 }
 
-const startNextLevel = (element) => {
+const startNextLevel = () => {
     currentLevel++;
+    if (currentLevel > levelMaps.length - 1)
+        currentLevel = levelMaps.length - 1;
 
     minObstacleSpawnChance = levelMaps[currentLevel].minObstacleSpawnChance;
     maxObstacleSpawnChance = levelMaps[currentLevel].maxObstacleSpawnChance;
@@ -528,26 +324,16 @@ const startNextLevel = (element) => {
     resetPlayer();
     resetGeneratedInteractables();
 
-    distanceSystem.Restart();
+    distanceSystem.Restart(levelMaps[currentLevel]);
 
-    let endCard = element.parentNode.parentNode;
-    endCard.remove();
-
-    let activeColliders = document.querySelectorAll('.collider');
-    for (let i = 0; i < activeColliders.length; i++) {
-        if (activeColliders[i].classList.contains('player'))
-            continue;
-        activeColliders[i].remove();
-    }
+    document.querySelector('.end-card').remove();
 
     initLoops();
 
     currentState = GameState.PLAYING;
 }
 
-const resetGeneratedInteractables = () => {
-    generatedInteractables.forEach(i => i.remove());
-}
+const resetGeneratedInteractables = () => generatedInteractables.forEach(i => i.remove());
 const resetPlayerProperties = () => {
     player.classList.remove('player-won');
     player.classList.remove('player-lost'); // In case I add a player-lost css property.
@@ -563,52 +349,38 @@ const resetPlayer = () => {
     setPlayerScore(0);
     player.style.left = '13vw';
 }
-const restartGame = (element) => {
+const restartGame = () => {
     resetPlayer();
     resetGeneratedInteractables();
 
-    distanceSystem.Restart();
+    distanceSystem.Restart(levelMaps[currentLevel]);
 
-    let endCard = element.parentNode.parentNode;
-    endCard.remove();
-
-    let activeColliders = document.querySelectorAll('.collider');
-    for (let i = 0; i < activeColliders.length; i++) {
-        if (activeColliders[i].classList.contains('player'))
-            continue;
-        activeColliders[i].remove();
-    }
+    document.querySelector('.end-card').remove();
 
     initLoops();
 
     currentState = GameState.PLAYING;
 }
 
-const decreasePlayerHearts = () => {
-    playerHearts = clamp(playerHearts - 1, 0, 3);
-}
-
 const onPlayerWon = () => {
     if (currentState === GameState.WIN) {
         inputSystem.DisableKeys();
-        distanceSystem.Pause();
-        
+        distanceSystem.Pause(root);
+
         player.classList.remove('player-jump-animation');
         player.classList.remove('player-jumping');
         player.classList.remove('player-running');
         player.classList.add('player-won');
 
-        clearInterval(i);
+        mainIntervals.forEach(i => clearInterval(i));
 
-        game.append(generateHTML(endCardTemplate(GameState.WIN, playerScore)));
+        game.append(endMenuGenerator(GameState.WIN));
     }
 }
 const onPlayerLost = () => {
     if (currentState === GameState.LOSE) {
-        // TODO: Player lose state. Show the lost screen and ask the player if they'd like to restart.
         inputSystem.DisableKeys();
-        distanceSystem.Pause();
-        modPlayerScore(0);
+        distanceSystem.Pause(root);
 
         player.classList.remove('player-jump-animation');
         player.classList.remove('player-jumping');
@@ -616,41 +388,34 @@ const onPlayerLost = () => {
 
         player.classList.add('player-won');
 
-        clearInterval(i);
+        mainIntervals.forEach(i => clearInterval(i));
 
-        game.append(generateHTML(endCardTemplate(GameState.LOSE, playerScore)));
+        game.append(endMenuGenerator(GameState.LOSE));
     }
 }
 
-const collisionSystem = new CollisionSystem();
-const animEventSystem = new AnimationEventSystem();
-const inputSystem     = new InputSystem();
-const distanceSystem  = new DistanceSystem(maxDst, dstIncrement);
-
+const decreasePlayerHearts = () => playerHearts = MathEX.clamp(playerHearts - 1, 0, 3);
 const updatePlayerHeartsDisplay = () => {
     let heartsDisplayedCount = playerHeartsDiv.querySelectorAll('li').length;
     if (heartsDisplayedCount !== playerHearts) {
-        playerHeartsDiv.innerHTML = playerHeartsTemplate(playerHearts);
+        playerHeartsDiv.innerHTML = playerHeartsGenerator(playerHearts);
     }
 }
 
-let spawningTicks = 0;
 const update = () => {
     switch (currentState) {
         case GameState.WIN:
-            clearInterval(i);
             mainIntervals.forEach(i => clearInterval(i));
             onPlayerWon();
             break;
         case GameState.LOSE:
-            clearInterval(i);
             mainIntervals.forEach(i => clearInterval(i));
             onPlayerLost();
             break;
         case GameState.PLAYING:
             inputSystem.HandleKeys();
-                
-            collisionSystem.HandleCollision();
+            collisionSystem.HandleCollision(interactables);
+
             updatePlayerHeartsDisplay();
 
             checkPlayerWon();
@@ -662,19 +427,91 @@ const update = () => {
     }
 }
 
-let generatedInteractables = [];
+let interactables = [];
+const initInteractables = () => {
+    interactables.push(new CoinInteractable());
+    interactables.push(new BigCoinInteractable());
+    interactables.push(new SpikeTrapInteractable());
+    interactables.push(new HeartInteractable());
+}
+const initCollisionHandlers = () => collisionSystem.AddCollisionHandler(new PlayerCollisionHandler(player));
+const initAnimEvents = () => {
+    animEventSystem.AddAnimationEventHandler(player, 'player-jump-animation', 'animationend', () => {
+        player.classList.remove('player-jump-animation');
+        player.classList.remove('player-jumping');
+        player.classList.add('player-running');
+    });
+
+    animEventSystem.HandleAnimationEvents();
+}
+const initInputs = () => {
+    // ' ' = Spacebar 
+    inputSystem.AddKeyHandler(' ', () => {
+        if (!player.classList.contains('player-jump-animation')) {
+            player.classList.add('player-jump-animation');
+            player.classList.add('player-jumping');
+            player.classList.remove('player-running');
+        }
+        if (!controls.classList.contains('fade-out-animation')) {
+            controls.classList.add('fade-out-animation');
+        }
+    });
+    inputSystem.AddKeyHandler('ArrowRight', () => {
+        let right = player.getBoundingClientRect().right;
+        let left = player.getBoundingClientRect().left;
+        let gameRight = game.getBoundingClientRect().right;
+
+        if (right < gameRight - 5)
+            player.style.left = `${left + velocityX}px`;
+
+        if (!controls.classList.contains('fade-out-animation')) {
+            controls.classList.add('fade-out-animation');
+        }
+    });
+    inputSystem.AddKeyHandler('ArrowLeft', () => {
+        let left = player.getBoundingClientRect().left;
+        let gameLeft = game.getBoundingClientRect().left;
+
+        if (left > gameLeft + 5) {
+            player.style.left = `${left - velocityX}px`;
+        }
+        if (!controls.classList.contains('fade-out-animation')) {
+            controls.classList.add('fade-out-animation');
+        }
+    });
+}
+const initLoops = () => {
+    Generators.generateLoopCallback(() => {
+        update();
+    }, 1000 / FPS, mainIntervals);
+    Generators.generateLoopCallback(() => {
+        if (currentState === GameState.PLAYING) {
+            let spawnChance = Math.random();
+            if (spawnChance <= obstacleSpawnChance) {
+                spawnInteractable();
+            }
+        }
+        obstacleSpawnChance = MathEX.clamp(obstacleSpawnChance + 0.01, minObstacleSpawnChance, maxObstacleSpawnChance);
+    }, 2000, mainIntervals);
+}
 const init = () => {
+    if (controls.classList.contains('fade-out-animation'))
+        controls.classList.remove('fade-out-animation');
+
     initInteractables();
     initCollisionHandlers();
     initAnimEvents();
     initInputs();
     initLoops();
 
-    
-    distanceSystem.Start();
+    player.classList.remove('player-won');
+    player.classList.add('player-running');
+
+    scrollingBG.classList.add('scroll-bg-animation');
+
+    distanceSystem.Start(levelMaps[currentLevel]);
 }
 
 window.onload = () => {
-    init();
-}
-
+    game.append(menuGenerator());
+};

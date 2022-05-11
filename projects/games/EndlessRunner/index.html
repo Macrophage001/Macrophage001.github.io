@@ -8,7 +8,6 @@
     <title>Endless Runner</title>
 </head>
 <body>
-    <div class="vacuum"></div>
     <div class="game">
         <div class="hearts">
             <ul></ul>
@@ -23,14 +22,15 @@
         </div>        
         
         <div class="scrolling-background"></div>
-        <div class="player collider player-running"></div>
+        <div class="player collider player-won"></div>
         <div class="controls">
             <p>&leftarrow; &rightarrow; : Move Left, Move Right</p>
             <p>Spacebar : Jump</p>
         </div>
     </div>
-    <div class="vacuum"></div>
-    <script type="module" src="./scripts/collisionSystem.js"></script>
-    <script src="./scripts/app.js"></script>
+    <div class="interactables-layer">
+
+    </div>
+    <script type="module" src="./scripts/app.js"></script>
 </body>
 </html>
