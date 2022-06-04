@@ -37,7 +37,9 @@ const About = () => (
     <div className="main">
         <Header title="About Me" subtitle="" />
         <NavLinks links={navLinks} />
-        <Content contentDescription="" component={<Description />} />
+        <Content contentDescription="">
+            <Description />
+        </Content>
     </div>
 )
 

@@ -1,14 +1,14 @@
 import React from 'react'
-import '../App.css'
+import '../styles/App.css'
 
-const Content = ({ contentDescription, component }) => (
+const Content = ({ contentDescription, children }) => (
     <div className="content">
         <div className="content-description">
             <h3 className='font-light text-center'>
                 {contentDescription}
             </h3>
         </div>
-        {component}
+        {children}
     </div>
 )
 

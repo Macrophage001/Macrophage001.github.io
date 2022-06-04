@@ -1,7 +1,10 @@
 :root {
-  --header-background-image: url('../public/assets/codeScreenshot.png');
-  --profile-image: url('../public/assets/profile_pic.jpg');
+  --header-background-image: url('../../public/assets/codeScreenshot.png');
+  --profile-image: url('../../public/assets/profile_pic.jpg');
 }
+
+@import url(./postPreview.css);
+@import url(./aboutMe.css);
 
 .main {
   height: 100%;
@@ -136,106 +139,6 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
-}
-
-.post-preview {
-  display: flex;
-  flex-direction: column;
-
-  position: relative;
-
-  width: 50%;
-  padding: 0.5rem 0.75rem;
-
-  min-height: 12rem;
-  box-shadow: 0 0 3px #d1d1d1;
-}
-
-.post-preview p {
-  padding: 1.5rem;
-}
-
-.post-preview h3 {
-  text-decoration: none;
-  font-size: 18px;
-  font-weight: bold;
-  color: #979797;
-}
-
-.post-preview a {
-  text-decoration: none;
-  font-size: 18px;
-  font-weight: bold;
-  text-align: right;
-  color: #979797;
-}
-
-.post-preview nav ul {
-  display: flex;
-}
-
-.post-preview nav ul li {
-  list-style: none;
-  margin: 0 0.125rem;
-}
-
-.post-preview nav ul li a {
-  font-size: 14px;
-}
-
-/* About Page CSS */
-.about-me {
-  display: flex;
-  justify-content: center;
-}
-
-.description {
-  display: flex;
-  flex-direction: column;
-
-  position: relative;
-
-  width: 50%;
-  padding: 0.5rem 0.75rem;
-
-  min-height: 12rem;
-  box-shadow: 0 0 3px #d1d1d1;
-}
-
-#description-content {
-  margin-top: 2rem;
-}
-
-.description p {
-  padding: 1.5rem;
-}
-
-.description h3 {
-  text-decoration: none;
-  font-size: 18px;
-  font-weight: bold;
-  color: rgb(151, 151, 151);
-}
-
-.description a {
-  text-decoration: none;
-  font-size: 18px;
-  font-weight: bold;
-  text-align: right;
-  color: rgb(151, 151, 151);
-}
-
-.description nav ul {
-  display: flex;
-}
-
-.description nav ul li {
-  list-style: none;
-  margin: 0 0.125rem;
-}
-
-.description nav ul li a {
-  font-size: 14px;
 }
 
 /* Projects Page  CSS */

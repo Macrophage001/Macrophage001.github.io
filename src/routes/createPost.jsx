@@ -41,9 +41,9 @@ const CreatePost = () => {
         <div className="main">
             <Header title="Submit a post" subtitle="" />
             <NavLinks links={navLinks} />
-            <Content
-                contentDescription=""
-                component={<Create />} />
+            <Content contentDescription="">
+                <Create />
+            </Content>
         </div>
     )
 }

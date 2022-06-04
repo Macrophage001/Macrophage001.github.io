@@ -4,7 +4,7 @@ import Header from '../components/header'
 import NavLinks from '../components/navLinks'
 import Content from '../components/content'
 
-import '../App.css'
+import '../styles/App.css'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlusSquare } from '@fortawesome/free-solid-svg-icons';
@@ -53,7 +53,9 @@ const Projects = () => {
         <div className="main">
             <Header title="Projects" subtitle="" />
             <NavLinks links={navLinks} />
-            <Content contentDescription="You can take a look at some of the projects I've worked on here!" component={<ProjectListing projects={projects} />} />
+            <Content contentDescription="You can take a look at some of the projects I've worked on here!">
+                <ProjectListing projects={projects} />
+            </Content>
         </div>
     )
 }
