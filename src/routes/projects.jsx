@@ -13,6 +13,7 @@ const navLinks = [
     { link: '/', title: 'Home' },
     { link: "#", title: "Tags" },
     { link: "#", title: "Contact" },
+    { link: "/projects", title: "Projects" },
     { link: "/About", title: "About" },
     { link: "/submit", title: <FontAwesomeIcon icon={faPlusSquare} /> },
 ]
@@ -20,13 +21,11 @@ const navLinks = [
 const ProjectListing = ({ projects }) => (
     <>
         {projects && projects.map(project => (
-            <div className="display-flex flexDirection-column justifyContent-center alignItems-center">
-                <div className='project-information'>
-                    <img src={project.thumbnailPath} alt='project_thumbnail' className='thumbnail-pic' />
-                    <div id='project-description'>
-                        <h2>{project.title}</h2>
-                        <p className='font-light'>{project.desc}</p>
-                    </div>
+            <div className='project-information'>
+                <img src={project.thumbnailPath} alt='project_thumbnail' className='thumbnail-pic' />
+                <div id='project-description'>
+                    <h2>{project.title}</h2>
+                    <p className='font-light'>{project.desc}</p>
                 </div>
             </div>
         ))}

@@ -8,4 +8,8 @@ const tryCatch = (t, c = (e => console.error('Error: ', e))) => {
     }
 }
 
-export default tryCatch;
+const generateUUID = (item) => {
+    return `${item.toString()}-${Date.now}`
+}
+
+export { tryCatch, generateUUID }

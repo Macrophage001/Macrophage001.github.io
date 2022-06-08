@@ -11,6 +11,7 @@ const navLinks = [
     { link: "#", title: "Tags" },
     { link: "#", title: "Contact" },
     { link: "/projects", title: "Projects" },
+    { link: "/About", title: "About" },
     { link: "/submit", title: <FontAwesomeIcon icon={faPlusSquare} /> },
 ]
 

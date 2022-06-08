@@ -8,6 +8,7 @@ import App from './App';
 import About from './routes/about';
 import Projects from './routes/projects';
 import CreatePost from './routes/createPost';
+import Post from './routes/post';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -18,6 +19,7 @@ root.render(
         <Route path='/about' element={<About />} />
         <Route path='/projects' element={<Projects />} />
         <Route path='/submit' element={<CreatePost />} />
+        <Route path='/post' element={<Post />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

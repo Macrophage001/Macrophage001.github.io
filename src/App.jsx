@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react'
+import ReactMarkdown from 'react-markdown';
+
 import { Link } from 'react-router-dom';
 
 import axios from 'axios';
@@ -11,9 +13,10 @@ import Header from './components/header';
 import NavLinks from './components/navLinks';
 import Content from './components/content';
 
-import tryCatch from './utils/util';
+import { tryCatch, generateUUID } from './utils/util';
 
 const navLinks = [
+	{ link: '/', title: 'Home' },
 	{ link: "#", title: "Tags" },
 	{ link: "#", title: "Contact" },
 	{ link: "/projects", title: "Projects" },
@@ -21,24 +24,20 @@ const navLinks = [
 	{ link: "/submit", title: <FontAwesomeIcon icon={faPlusSquare} /> },
 ]
 
-const useInitPosts = () => {
+function App() {
 	const [posts, setPosts] = useState([])
 
 	const loadPosts = () => {
 		tryCatch(async () => {
 			let resp = await axios.get('/posts');
-			setPosts(resp.data);
-		});
+			console.log(resp);
+			setPosts(resp.data.reverse());
+		})();
 	}
 
 	useEffect(() => {
 		loadPosts()
-	}, [])
-	return posts;
-}
-
-function App() {
-	const posts = useInitPosts();
+	}, []);
 
 	return (
 		<div className="main">
@@ -46,23 +45,23 @@ function App() {
 			<NavLinks links={navLinks} />
 			<Content contentDescription="">
 				<div className="posts">
-					{posts && posts.map((post, i) => (
-						<div className="post-preview">
+					{posts && posts.map(post => (
+						<div key={generateUUID(post.title)} className="post-preview">
 							<h3>{post.title}</h3>
 							<nav>
 								<ul>
-									{post.tags && post.tags.map((tag, i) => (
-										<li><Link to="#">{`#${tag}`}</Link></li>
+									{post.tags && post.tags.map(tag => (
+										<li key={generateUUID(tag)}><Link to="#">{`#${tag}`}</Link></li>
 									))}
 								</ul>
 							</nav>
-							<p className='font-light'>{post.desc}</p>
-							<Link to="#">Read &#8627;</Link>
+							<ReactMarkdown className='font-light'>{post.desc}</ReactMarkdown>
+							<Link className='read-more' to="/post" state={{ post }}>Read &#8627;</Link>
 						</div>
 					))}
 				</div>
-			</Content>
-		</div>
+			</Content >
+		</div >
 	);
 }
 

@@ -1,11 +1,10 @@
-.post-preview {
+.post-full {
     display: flex;
     flex-direction: column;
 
     position: relative;
 
     overflow: hidden;
-    max-height: 12rem;
 
     width: 50%;
     padding: 0.5rem 0.75rem;
@@ -14,44 +13,34 @@
     box-shadow: 0 0 3px #d1d1d1;
 }
 
-.post-preview::before {
-    content: '';
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    left: 0;
-    top: 0;
-    background: linear-gradient(transparent 10px, white);
-}
-
-.post-preview:hover {
+.post-full:hover {
     transition: 300ms ease forwards;
     box-shadow: 0 0 6px rgb(165, 165, 165);
 }
 
-.post-preview p {
+.post-full p {
     padding: 1.5rem;
 }
 
-.post-preview a:hover {
+.post-full a:hover {
     transition: 300ms ease;
     color: #32328f;
 }
 
-.post-preview:hover a,
-.post-preview:hover h3 {
+.post-full:hover a,
+.post-full:hover h3 {
     transition: 300ms ease;
     color: rgb(85, 85, 85);
 }
 
-.post-preview h3 {
+.post-full h3 {
     text-decoration: none;
     font-size: 18px;
     font-weight: bold;
     color: #979797;
 }
 
-.post-preview a {
+.post-full a {
     text-decoration: none;
     font-size: 18px;
     font-weight: bold;
@@ -59,15 +48,15 @@
     color: #979797;
 }
 
-.post-preview nav ul {
+.post-full nav ul {
     display: flex;
 }
 
-.post-preview nav ul li {
+.post-full nav ul li {
     list-style: none;
     margin: 0 0.125rem;
 }
 
-.post-preview nav ul li a {
+.post-full nav ul li a {
     font-size: 14px;
 }
